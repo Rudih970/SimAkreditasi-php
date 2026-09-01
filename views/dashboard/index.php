@@ -1,0 +1,283 @@
+<?php
+/**
+ * SIM Akreditasi — Dashboard View
+ */
+require_once ROOT_PATH . '/views/templates/header.php';
+?>
+
+<!-- Dashboard Header -->
+<div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Dashboard</h1>
+            <p class="text-gray-500 text-sm mt-1">Selamat datang kembali, <span class="text-gray-300"><?= e($currentUser['nama_lengkap'] ?? '') ?></span></p>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span><?= format_tanggal(date('Y-m-d'), 'long') ?></span>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Total Program Studi -->
+    <div class="stat-card indigo">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center">
+                <i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-400"></i>
+            </div>
+            <span class="text-xs text-gray-600 font-medium">Prodi</span>
+        </div>
+        <p class="text-2xl font-bold text-white"><?= format_number($stats['total_prodi']) ?></p>
+        <p class="text-xs text-gray-500 mt-1">Program Studi Aktif</p>
+    </div>
+
+    <!-- Pengajuan Aktif -->
+    <div class="stat-card emerald">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                <i data-lucide="file-check" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+            <span class="text-xs text-gray-600 font-medium">Aktif</span>
+        </div>
+        <p class="text-2xl font-bold text-white"><?= format_number($stats['pengajuan_aktif']) ?></p>
+        <p class="text-xs text-gray-500 mt-1">Pengajuan Berjalan</p>
+    </div>
+
+    <!-- Review Pending -->
+    <div class="stat-card amber">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
+                <i data-lucide="scan-search" class="w-5 h-5 text-amber-400"></i>
+            </div>
+            <span class="text-xs text-gray-600 font-medium">Review</span>
+        </div>
+        <p class="text-2xl font-bold text-white"><?= format_number($stats['review_pending']) ?></p>
+        <p class="text-xs text-gray-500 mt-1">Review Menunggu</p>
+    </div>
+
+    <!-- Jadwal Aktif -->
+    <div class="stat-card rose">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center">
+                <i data-lucide="calendar-days" class="w-5 h-5 text-rose-400"></i>
+            </div>
+            <span class="text-xs text-gray-600 font-medium">Jadwal</span>
+        </div>
+        <p class="text-2xl font-bold text-white"><?= format_number($stats['jadwal_aktif']) ?></p>
+        <p class="text-xs text-gray-500 mt-1">Kegiatan Mendatang</p>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left Column: Pengajuan Terbaru (2/3 width) -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- Pengajuan Terbaru -->
+        <div class="glass-card overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary-500/10 rounded-lg flex items-center justify-center">
+                        <i data-lucide="file-check" class="w-4 h-4 text-primary-400"></i>
+                    </div>
+                    <h2 class="text-sm font-semibold text-white">Pengajuan Terbaru</h2>
+                </div>
+                <?php if (is_role(['admin_universitas', 'kepala_kpma', 'kabid_kpma', 'admin_prodi'])): ?>
+                    <a href="<?= url('pengajuan') ?>" class="text-xs text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                        Lihat Semua →
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <?php if (empty($pengajuanTerbaru)): ?>
+                <div class="px-6 py-12 text-center">
+                    <div class="w-12 h-12 bg-white/[0.04] rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="inbox" class="w-5 h-5 text-gray-600"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">Belum ada pengajuan akreditasi</p>
+                </div>
+            <?php else: ?>
+                <div class="divide-y divide-white/[0.04]">
+                    <?php foreach ($pengajuanTerbaru as $paj): ?>
+                        <div class="px-6 py-4 hover:bg-white/[0.02] transition-colors">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="text-sm font-semibold text-gray-200 truncate"><?= e($paj['nama_prodi']) ?></p>
+                                        <span class="text-[10px] text-gray-600 bg-white/[0.04] px-1.5 py-0.5 rounded font-medium"><?= e($paj['jenjang']) ?></span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        <?= e($paj['nomor_pengajuan']) ?> &bull;
+                                        <?= e(ucfirst(str_replace('_', ' ', $paj['jenis_pengajuan']))) ?> &bull;
+                                        <?= format_tanggal($paj['tanggal_pengajuan'], 'short') ?>
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <?= status_badge($paj['status']) ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Jadwal Mendatang -->
+        <div class="glass-card overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                        <i data-lucide="calendar-days" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                    <h2 class="text-sm font-semibold text-white">Jadwal Mendatang</h2>
+                </div>
+                <a href="<?= url('jadwal') ?>" class="text-xs text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                    Lihat Semua →
+                </a>
+            </div>
+
+            <?php if (empty($jadwalMendatang)): ?>
+                <div class="px-6 py-12 text-center">
+                    <div class="w-12 h-12 bg-white/[0.04] rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="calendar-x" class="w-5 h-5 text-gray-600"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">Tidak ada jadwal mendatang</p>
+                </div>
+            <?php else: ?>
+                <div class="divide-y divide-white/[0.04]">
+                    <?php foreach ($jadwalMendatang as $jdw): ?>
+                        <div class="px-6 py-4 hover:bg-white/[0.02] transition-colors">
+                            <div class="flex items-start gap-4">
+                                <!-- Date Box -->
+                                <div class="flex-shrink-0 w-12 h-14 bg-primary-500/10 rounded-xl flex flex-col items-center justify-center border border-primary-500/20">
+                                    <span class="text-lg font-bold text-primary-400 leading-none"><?= date('d', strtotime($jdw['tanggal_mulai'])) ?></span>
+                                    <span class="text-[10px] text-primary-400/70 font-medium uppercase mt-0.5"><?= format_tanggal($jdw['tanggal_mulai'], 'month_short') ?></span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-200 mb-1 truncate"><?= e($jdw['judul_kegiatan']) ?></p>
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="graduation-cap" class="w-3 h-3"></i>
+                                            <?= e($jdw['nama_prodi']) ?>
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="clock" class="w-3 h-3"></i>
+                                            <?= date('H:i', strtotime($jdw['tanggal_mulai'])) ?> WIB
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <?= status_badge($jdw['status']) ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Right Column: Activity & Quick Stats (1/3 width) -->
+    <div class="space-y-6">
+
+        <!-- Quick Stats -->
+        <div class="glass-card p-6">
+            <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-500"></i>
+                Ringkasan Sistem
+            </h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500">Total Pengguna</span>
+                    <span class="text-sm font-semibold text-gray-200"><?= format_number($stats['total_users']) ?></span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500">Total Pengajuan</span>
+                    <span class="text-sm font-semibold text-gray-200"><?= format_number($stats['total_pengajuan']) ?></span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500">Dokumen Borang</span>
+                    <span class="text-sm font-semibold text-gray-200"><?= format_number($stats['total_borang']) ?></span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500">Total Review</span>
+                    <span class="text-sm font-semibold text-gray-200"><?= format_number($stats['total_review']) ?></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aktivitas Terbaru -->
+        <div class="glass-card overflow-hidden">
+            <div class="px-6 py-4 border-b border-white/[0.06]">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <i data-lucide="activity" class="w-4 h-4 text-gray-500"></i>
+                    Aktivitas Terbaru
+                </h3>
+            </div>
+
+            <?php if (empty($aktivitasTerbaru)): ?>
+                <div class="px-6 py-8 text-center">
+                    <p class="text-gray-600 text-sm">Belum ada aktivitas</p>
+                </div>
+            <?php else: ?>
+                <div class="divide-y divide-white/[0.04]">
+                    <?php foreach ($aktivitasTerbaru as $log): ?>
+                        <div class="px-6 py-3 hover:bg-white/[0.02] transition-colors">
+                            <div class="flex items-start gap-3">
+                                <div class="w-7 h-7 rounded-lg bg-white/[0.04] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i data-lucide="<?= match($log['modul']) {
+                                        'auth'     => 'log-in',
+                                        'pengajuan'=> 'file-check',
+                                        'borang'   => 'upload',
+                                        'review'   => 'scan-search',
+                                        'jadwal'   => 'calendar',
+                                        'laporan'  => 'file-bar-chart',
+                                        default    => 'activity',
+                                    } ?>" class="w-3.5 h-3.5 text-gray-500"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-gray-300">
+                                        <span class="font-medium"><?= e($log['nama_lengkap'] ?? 'System') ?></span>
+                                        <span class="text-gray-500"><?= e(str_limit($log['aktivitas'], 40)) ?></span>
+                                    </p>
+                                    <p class="text-[10px] text-gray-600 mt-0.5"><?= format_tanggal($log['created_at'], 'datetime') ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- User Role Info -->
+        <div class="glass-card p-6">
+            <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4 text-gray-500"></i>
+                Akses Anda
+            </h3>
+            <div class="mb-3">
+                <?= role_badge($currentUser['role'] ?? '') ?>
+            </div>
+            <p class="text-xs text-gray-500 leading-relaxed">
+                <?php
+                $roleDesc = match($currentUser['role'] ?? '') {
+                    'admin_universitas'  => 'Anda memiliki akses penuh ke seluruh fitur sistem termasuk manajemen pengguna dan pengaturan.',
+                    'kepala_kpma'        => 'Anda dapat menyetujui pengajuan, melihat seluruh laporan, dan memonitor proses akreditasi.',
+                    'kabid_kpma'         => 'Anda dapat mengelola jadwal pendampingan, mereview dokumen, dan menyetujui laporan kegiatan.',
+                    'reviewer_internal'  => 'Anda bertugas mereview dokumen borang dan memberikan rekomendasi penilaian.',
+                    'asesor_internal'    => 'Anda bertugas melakukan desk evaluation dan penilaian substansi dokumen akreditasi.',
+                    'admin_prodi'        => 'Anda dapat mengelola pengajuan dan dokumen borang untuk program studi Anda.',
+                    'team_task_force'    => 'Anda bertugas menyiapkan dan mengupload dokumen borang serta mengikuti kegiatan pendampingan.',
+                    default              => 'Akses Anda terbatas sesuai peran yang diberikan.',
+                };
+                echo e($roleDesc);
+                ?>
+            </p>
+        </div>
+    </div>
+</div>
+
+<?php require_once ROOT_PATH . '/views/templates/footer.php'; ?>

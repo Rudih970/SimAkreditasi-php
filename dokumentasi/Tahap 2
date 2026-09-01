@@ -1,0 +1,127 @@
+# Walkthrough — Tahap 1 & 2: Database + Arsitektur MVC
+
+## Tahap 1 ✅ — Database MySQL & Skema Relasi
+
+- **11 tabel**, **20 FK constraints**, **30+ indexes**
+- **65 records** seeder data untuk pengujian
+- Files: [akreditasiflow_db.sql](file:///c:/xampp/htdocs/SimAkreditasi/database/akreditasiflow_db.sql), [seeder.sql](file:///c:/xampp/htdocs/SimAkreditasi/database/seeder.sql)
+
+---
+
+## Tahap 2 ✅ — Arsitektur Proyek & Koneksi Database
+
+### Struktur Direktori Final
+
+```
+SimAkreditasi/
+├── .htaccess                          # URL rewriting + security
+├── index.php                          # Front controller (entry point)
+├── README.md                          # Dokumentasi proyek
+│
+├── config/
+│   ├── app.php                        # Konfigurasi + RBAC role matrix
+│   └── database.php                   # Koneksi PDO Singleton
+│
+├── core/
+│   ├── App.php                        # Router & dispatcher
+│   ├── Controller.php                 # Base controller + middleware
+│   ├── Model.php                      # Base model + CRUD + pagination
+│   └── Helpers.php                    # Helper functions global
+│
+├── controllers/
+│   ├── AuthController.php             # Login, logout, session
+│   ├── DashboardController.php        # Dashboard + statistik
+│   └── ErrorController.php            # 404, 403
+│
+├── models/                            # (siap untuk Tahap 3+)
+│
+├── views/
+│   ├── templates/
+│   │   ├── header.php                 # Tailwind CSS + Lucide Icons + navbar
+│   │   ├── sidebar.php                # Navigasi RBAC-aware
+│   │   └── footer.php                 # Search modal + scripts
+│   ├── auth/
+│   │   └── login.php                  # Halaman login premium
+│   ├── dashboard/
+│   │   └── index.php                  # Dashboard utama
+│   └── errors/
+│       ├── 404.php                    # Halaman Not Found
+│       └── 403.php                    # Halaman Forbidden
+│
+├── assets/
+│   ├── css/style.css                  # Custom styles (glassmorphism, forms, dll)
+│   ├── js/app.js                      # Custom JavaScript
+│   └── img/                           # (siap untuk gambar)
+│
+├── uploads/                           # Protected: no PHP execution
+│   ├── borang/
+│   ├── sk/
+│   ├── laporan/
+│   └── profil/
+│
+├── database/
+│   ├── akreditasiflow_db.sql          # DDL (Tahap 1)
+│   └── seeder.sql                     # Data testing (Tahap 1)
+│
+└── logs/                              # Protected: deny all access
+```
+
+### Komponen Utama yang Dibangun
+
+#### 1. Koneksi Database PDO ([database.php](file:///c:/xampp/htdocs/SimAkreditasi/config/database.php))
+- **Singleton Pattern** — satu koneksi per request
+- **Prepared statements** — aman dari SQL injection
+- **Try-catch** lengkap dengan error logging ke file
+- **Helper methods**: `fetchAll()`, `fetch()`, `execute()`, `count()`, `beginTransaction()`
+- **Error pages** styled untuk mode debug & production
+
+#### 2. MVC Core
+- [App.php](file:///c:/xampp/htdocs/SimAkreditasi/core/App.php) — Router dengan URL mapping & dash-to-camelCase
+- [Controller.php](file:///c:/xampp/htdocs/SimAkreditasi/core/Controller.php) — `requireLogin()`, `requireRole()`, `view()`, `redirect()`, CSRF, flash messages
+- [Model.php](file:///c:/xampp/htdocs/SimAkreditasi/core/Model.php) — CRUD, mass assignment protection, `paginate()`, `raw()`
+- [Helpers.php](file:///c:/xampp/htdocs/SimAkreditasi/core/Helpers.php) — `format_tanggal()`, `status_badge()`, `role_badge()`, `get_initials()`, `e()`
+
+#### 3. Template Global (Tailwind CSS + Lucide Icons)
+- [header.php](file:///c:/xampp/htdocs/SimAkreditasi/views/templates/header.php) — Tailwind CDN config, Google Fonts Inter, top navbar dengan search/notifications/profile dropdown
+- [sidebar.php](file:///c:/xampp/htdocs/SimAkreditasi/views/templates/sidebar.php) — Menu RBAC-based, section dividers, active page pulse, mobile responsive
+- [footer.php](file:///c:/xampp/htdocs/SimAkreditasi/views/templates/footer.php) — Search modal (Ctrl+K), Lucide Icons init, custom JS
+
+#### 4. Custom UI ([style.css](file:///c:/xampp/htdocs/SimAkreditasi/assets/css/style.css) + [app.js](file:///c:/xampp/htdocs/SimAkreditasi/assets/js/app.js))
+- Glassmorphism cards, stat cards with color glow
+- Dark theme form inputs, selects, textareas
+- Gradient buttons (primary, success, danger, warning, outline, ghost)
+- Data tables, tooltips, progress bars, skeleton loaders
+- Mobile sidebar toggle, profile dropdown, Ctrl+K search
+- File upload preview with validation
+- Auto-dismiss flash messages
+
+### Verifikasi
+
+| Test | Status |
+|------|--------|
+| Login page loads (`/auth/login`) | ✅ |
+| Root URL redirects to login | ✅ |
+| 404 returns HTTP 404 | ✅ |
+| PDO connects to `akreditasiflow_db` | ✅ |
+| 11 tables accessible | ✅ |
+| 14 users with correct bcrypt hash | ✅ |
+| All 20 project files created | ✅ |
+| All 17 directories created | ✅ |
+| Security: uploads blocks PHP | ✅ |
+| Security: logs denies access | ✅ |
+
+### Akun Login Testing
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin1@universitas.ac.id` | `password123` | Admin Universitas |
+| `kepala.kpma@universitas.ac.id` | `password123` | Kepala KPMA |
+| `kabid.akreditasi@universitas.ac.id` | `password123` | Kabid KPMA |
+| `reviewer1@universitas.ac.id` | `password123` | Reviewer Internal |
+| `asesor1@universitas.ac.id` | `password123` | Asesor Internal |
+| `admin.ti@universitas.ac.id` | `password123` | Admin Prodi |
+| `taskforce1@universitas.ac.id` | `password123` | Team Task Force |
+
+### Siap untuk Tahap 3
+
+Fondasi MVC, koneksi database, dan template UI sudah lengkap. Tahap selanjutnya: **Sistem Autentikasi & RBAC** — login flow sudah berjalan, tinggal membangun middleware RBAC penuh dan modul manajemen pengguna.
