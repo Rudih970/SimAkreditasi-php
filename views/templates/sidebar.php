@@ -151,7 +151,7 @@ $activePage = $activePage ?? ''; // Fallback for linting and safety
         </div>
         <div>
             <h1 class="text-base font-bold text-surface-900 leading-tight tracking-tight"><?= e(APP_NAME) ?></h1>
-            <p class="text-[10px] text-surface-500 font-medium tracking-wider uppercase">Akreditasi Flow</p>
+            <p class="text-[10px] text-surface-500 font-medium tracking-wider uppercase">SIM Akreditasi</p>
         </div>
         <!-- Mobile Close Button -->
         <button id="btn-close-sidebar" class="lg:hidden ml-auto p-1.5 text-surface-500 hover:text-surface-900 hover:bg-surface-100 rounded-lg transition-all">
