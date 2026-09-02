@@ -1,0 +1,22 @@
+[2026-09-02 10:21:53] DATABASE ERROR
+  Message: SQLSTATE[HY000] [1049] Unknown database 'akreditasiflow_db'
+  Code: 1049
+  File: C:\xampp\htdocs\SimAkreditasi\config\database.php:90
+  Trace: #0 C:\xampp\htdocs\SimAkreditasi\config\database.php(90): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), Array)
+#1 C:\xampp\htdocs\SimAkreditasi\config\database.php(135): Database->__construct()
+#2 C:\xampp\htdocs\SimAkreditasi\core\Controller.php(33): Database::getInstance()
+#3 C:\xampp\htdocs\SimAkreditasi\core\App.php(87): Controller->__construct()
+#4 C:\xampp\htdocs\SimAkreditasi\index.php(40): App->__construct()
+#5 {main}
+--------------------------------------------------------------------------------
+[2026-09-02 10:22:04] DATABASE ERROR
+  Message: SQLSTATE[HY000] [1049] Unknown database 'akreditasiflow_db'
+  Code: 1049
+  File: C:\xampp\htdocs\SimAkreditasi\config\database.php:90
+  Trace: #0 C:\xampp\htdocs\SimAkreditasi\config\database.php(90): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), Array)
+#1 C:\xampp\htdocs\SimAkreditasi\config\database.php(135): Database->__construct()
+#2 C:\xampp\htdocs\SimAkreditasi\core\Controller.php(33): Database::getInstance()
+#3 C:\xampp\htdocs\SimAkreditasi\core\App.php(87): Controller->__construct()
+#4 C:\xampp\htdocs\SimAkreditasi\index.php(40): App->__construct()
+#5 {main}
+--------------------------------------------------------------------------------
