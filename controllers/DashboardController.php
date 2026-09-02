@@ -73,6 +73,26 @@ class DashboardController extends Controller
              LIMIT 8"
         );
 
+        // Cek jika role adalah prodi atau task force
+        if (is_role(['admin_prodi', 'team_task_force'])) {
+            $prodiId = $this->user['program_studi_id'] ?? null;
+            $pengajuanAktif = null;
+            
+            if ($prodiId) {
+                $pengajuanAktif = $this->db->fetch(
+                    "SELECT * FROM pengajuan_akreditasi WHERE program_studi_id = :pid AND status NOT IN ('selesai','ditolak') ORDER BY created_at DESC LIMIT 1",
+                    ['pid' => $prodiId]
+                );
+            }
+
+            $this->view('dashboard.prodi', [
+                'pageTitle'         => 'Dashboard Alur',
+                'activePage'        => 'dashboard',
+                'pengajuanAktif'    => $pengajuanAktif,
+            ]);
+            return;
+        }
+
         // Monitoring data untuk semua program studi
         $monitoringData = $programStudiModel->getMonitoringData();
 
@@ -86,7 +106,7 @@ class DashboardController extends Controller
         }
 
         $this->view('dashboard.index', [
-            'pageTitle'         => 'Dashboard',
+            'pageTitle'         => 'Dashboard Penjaminan Mutu',
             'activePage'        => 'dashboard',
             'stats'             => $stats,
             'jenjangBreakdown'  => $jenjangBreakdown,

@@ -2,32 +2,8 @@
 /**
  * User Management List View
  */
-
-$currentUser = $_SESSION['user'] ?? null;
+require_once ROOT_PATH . '/views/templates/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($pageTitle ?? 'Manajemen Akun') ?> — <?= e(APP_NAME) ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
-</head>
-<body class="bg-slate-50">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <?php include ROOT_PATH . '/views/templates/sidebar.php'; ?>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
-            <?php include ROOT_PATH . '/views/templates/navbar.php'; ?>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 <!-- Header -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-4">
@@ -68,17 +44,6 @@ $currentUser = $_SESSION['user'] ?? null;
 
                     <!-- Flash Messages -->
                     <?= flash_message() ?>
-                </div>
-
-                <!-- Role Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <?php foreach ($roleStats as $roleKey => $stat): ?>
-                        <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-                            <p class="text-xs font-bold text-slate-600 uppercase tracking-wider"><?= e($stat['label']) ?></p>
-                            <p class="text-2xl font-bold text-indigo-600 mt-2"><?= $stat['count'] ?></p>
-                            <p class="text-xs text-slate-500 mt-1">Pengguna Aktif</p>
-                        </div>
-                    <?php endforeach; ?>
                 </div>
 
                 <!-- Table -->
@@ -171,12 +136,4 @@ $currentUser = $_SESSION['user'] ?? null;
                         </div>
                     <?php endif; ?>
                 </div>
-            </main>
-        </div>
-    </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-</html>
+<?php require_once ROOT_PATH . '/views/templates/footer.php'; ?>

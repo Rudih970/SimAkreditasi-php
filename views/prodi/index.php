@@ -1,34 +1,9 @@
 <?php
 /**
  * Program Studi List & Management View
- * Sesuai dengan struktur HTML aplikasi_akreditasi.html
  */
-
-$currentUser = $_SESSION['user'] ?? null;
+require_once ROOT_PATH . '/views/templates/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($pageTitle ?? 'Program Studi') ?> — <?= e(APP_NAME) ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
-</head>
-<body class="bg-slate-50">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <?php include ROOT_PATH . '/views/templates/sidebar.php'; ?>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
-            <?php include ROOT_PATH . '/views/templates/navbar.php'; ?>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 <!-- Header dengan Filter -->
                 <div class="mb-6 space-y-4">
                     <div class="flex items-center justify-between flex-wrap gap-4">
@@ -181,12 +156,4 @@ $currentUser = $_SESSION['user'] ?? null;
                         </div>
                     <?php endif; ?>
                 </div>
-            </main>
-        </div>
-    </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-</html>
+<?php require_once ROOT_PATH . '/views/templates/footer.php'; ?>
