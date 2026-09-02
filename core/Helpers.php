@@ -399,3 +399,24 @@ function get_initials(string $name): string
     
     return $initials ?: '??';
 }
+
+/**
+ * Set flash message
+ * @param string $type Tipe (success, error, warning, info)
+ * @param string $message Pesan
+ * @return void
+ */
+function set_flash(string $type, string $message): void
+{
+    $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+}
+
+/**
+ * Validate CSRF token
+ * @param string $token Token dari form
+ * @return bool
+ */
+function validate_csrf(string $token): bool
+{
+    return !empty($token) && $token === ($_SESSION['csrf_token'] ?? '');
+}

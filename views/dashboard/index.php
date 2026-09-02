@@ -70,6 +70,169 @@ require_once ROOT_PATH . '/views/templates/header.php';
     </div>
 </div>
 
+<!-- Jenjang Program Studi -->
+<div class="mb-8">
+    <h2 class="text-lg font-semibold text-surface-900 mb-4">Jenjang Program Studi</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <?php 
+        $jenjangConfig = [
+            'S3'       => ['label' => 'S3 / DOKTOR', 'icon' => 'award', 'color' => 'purple'],
+            'S2'       => ['label' => 'S2 / MAGISTER', 'icon' => 'book-open', 'color' => 'blue'],
+            'S1'       => ['label' => 'S1 / SARJANA', 'icon' => 'graduation-cap', 'color' => 'emerald'],
+            'D4'       => ['label' => 'D4 / SARJ. TERAPAN', 'icon' => 'briefcase', 'color' => 'amber'],
+            'Profesi'  => ['label' => 'PROFESI', 'icon' => 'stethoscope', 'color' => 'rose'],
+            'D3'       => ['label' => 'D3 / DIPLOMA 3', 'icon' => 'layers', 'color' => 'orange'],
+        ];
+        foreach ($jenjangConfig as $jenjang => $config):
+            $data = $jenjangBreakdown[$jenjang] ?? ['total' => 0, 'active' => 0, 'expired' => 0];
+            $colorClass = match($config['color']) {
+                'purple' => 'border-purple-200 bg-purple-50 hover:bg-purple-100',
+                'blue' => 'border-blue-200 bg-blue-50 hover:bg-blue-100',
+                'emerald' => 'border-emerald-200 bg-emerald-50 hover:bg-emerald-100',
+                'amber' => 'border-amber-200 bg-amber-50 hover:bg-amber-100',
+                'rose' => 'border-rose-200 bg-rose-50 hover:bg-rose-100',
+                'orange' => 'border-orange-200 bg-orange-50 hover:bg-orange-100',
+            };
+            $textColor = match($config['color']) {
+                'purple' => 'text-purple-600',
+                'blue' => 'text-blue-600',
+                'emerald' => 'text-emerald-600',
+                'amber' => 'text-amber-600',
+                'rose' => 'text-rose-600',
+                'orange' => 'text-orange-600',
+            };
+        ?>
+        <div class="glass-card p-4 border <?= $colorClass ?> transition-colors cursor-pointer">
+            <div class="flex flex-col items-center text-center gap-2">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/50">
+                    <i data-lucide="<?= $config['icon'] ?>" class="w-5 h-5 <?= $textColor ?>"></i>
+                </div>
+                <p class="text-2xl font-bold text-surface-900"><?= $data['total'] ?></p>
+                <p class="text-[11px] text-surface-600 font-medium uppercase tracking-wide"><?= $config['label'] ?></p>
+                <?php if ($data['expired'] > 0): ?>
+                    <div class="w-full mt-1 pt-2 border-t border-current/10">
+                        <span class="text-[10px] text-rose-600 font-semibold"><?= $data['expired'] ?> Kadaluarsa</span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- Pemantauan Alur Administrasi Aktif -->
+<div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-surface-900">Pemantauan Alur Administrasi Aktif</h2>
+        <a href="<?= url('program-studi') ?>" class="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors flex items-center gap-1">
+            Kelola Semua Prodi <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+    </div>
+
+    <div class="glass-card overflow-hidden">
+        <?php if (empty($monitoringData)): ?>
+            <div class="px-6 py-12 text-center">
+                <div class="w-12 h-12 bg-surface-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-surface-200">
+                    <i data-lucide="inbox" class="w-5 h-5 text-surface-400"></i>
+                </div>
+                <p class="text-surface-500 text-sm">Tidak ada data program studi</p>
+            </div>
+        <?php else: ?>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-surface-50 border-b border-surface-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold text-surface-700">Program Studi</th>
+                            <th class="px-6 py-3 text-left font-semibold text-surface-700">Fakultas</th>
+                            <th class="px-6 py-3 text-left font-semibold text-surface-700">Status Akreditasi</th>
+                            <th class="px-6 py-3 text-center font-semibold text-surface-700">Progress</th>
+                            <th class="px-6 py-3 text-center font-semibold text-surface-700">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-100">
+                        <?php foreach ($monitoringData as $data): 
+                            $progressPercent = 0;
+                            if ($data['total_stages'] > 0) {
+                                $progressPercent = round(($data['completed_stages'] / $data['total_stages']) * 100);
+                            }
+                            $statusClass = match($data['status_pengajuan'] ?? null) {
+                                'draft' => 'bg-slate-100 text-slate-700',
+                                'diajukan' => 'bg-blue-100 text-blue-700',
+                                'review' => 'bg-amber-100 text-amber-700',
+                                'revisi' => 'bg-orange-100 text-orange-700',
+                                'disetujui' => 'bg-emerald-100 text-emerald-700',
+                                'ditolak' => 'bg-rose-100 text-rose-700',
+                                'selesai' => 'bg-purple-100 text-purple-700',
+                                default => 'bg-surface-100 text-surface-700',
+                            };
+                        ?>
+                        <tr class="hover:bg-surface-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full" style="background-color: <?= match($data['jenjang']) {
+                                        'S3' => '#a855f7',
+                                        'S2' => '#3b82f6',
+                                        'S1' => '#10b981',
+                                        'D4' => '#f59e0b',
+                                        'Profesi' => '#f43f5e',
+                                        'D3' => '#f97316',
+                                        default => '#6b7280'
+                                    } ?>"></div>
+                                    <div>
+                                        <p class="font-semibold text-surface-900"><?= e($data['nama_prodi']) ?></p>
+                                        <p class="text-xs text-surface-500"><?= e($data['jenjang']) ?></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-surface-700"><?= e($data['fakultas']) ?></td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <?php if (!empty($data['status_pengajuan'])): ?>
+                                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium <?= $statusClass ?>">
+                                            <?= ucfirst(str_replace('_', ' ', $data['status_pengajuan'])) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-surface-100 text-surface-700">
+                                            No Status
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if ($data['akreditasi_terakhir']): ?>
+                                        <p class="text-xs text-surface-500 mt-1">
+                                            Akreditasi: <span class="font-medium"><?= e($data['akreditasi_terakhir']) ?></span>
+                                            <?php if ($data['tanggal_kadaluarsa']): ?>
+                                                <br>Kadaluarsa: <?= format_tanggal($data['tanggal_kadaluarsa'], 'short') ?>
+                                            <?php endif; ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-20 bg-surface-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-primary-500 to-primary-600 h-full rounded-full transition-all" 
+                                             style="width: <?= $progressPercent ?>%"></div>
+                                    </div>
+                                    <span class="text-xs font-medium text-surface-600">
+                                        <?= $progressPercent ?>% (<?= $data['completed_stages'] ?>/<?= $data['total_stages'] ?>)
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="<?= url('pengajuan/' . ($data['pengajuan_id'] ?? '')) ?>" 
+                                   class="text-primary-600 hover:text-primary-700 transition-colors"
+                                   title="Lihat Detail">
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
 <!-- Main Content Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

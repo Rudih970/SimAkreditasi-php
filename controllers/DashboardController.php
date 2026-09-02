@@ -5,12 +5,17 @@
  * ============================================================================
  */
 
+require_once ROOT_PATH . '/models/ProgramStudi.php';
+
 class DashboardController extends Controller
 {
     public function index(): void
     {
         // Terapkan middleware check_access untuk semua role yang diizinkan
         check_access(array_keys(ROLES));
+
+        // Initialize model
+        $programStudiModel = new ProgramStudi();
 
         // Statistik ringkasan untuk dashboard
         $stats = [
@@ -22,6 +27,19 @@ class DashboardController extends Controller
             'total_borang'    => $this->db->count("SELECT COUNT(*) FROM borang_files"),
             'jadwal_aktif'    => $this->db->count("SELECT COUNT(*) FROM jadwal_pendampingan WHERE status IN ('dijadwalkan','berlangsung')"),
             'total_users'     => $this->db->count("SELECT COUNT(*) FROM users WHERE is_active = 1"),
+            'prodi_expired'   => $programStudiModel->countExpired(),
+        ];
+
+        // Breakdown program studi by jenjang
+        $jenjangStats = $programStudiModel->countByJenjang();
+        // Standardize jenjang for consistent display
+        $jenjangBreakdown = [
+            'S3'       => $jenjangStats['S3'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
+            'S2'       => $jenjangStats['S2'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
+            'S1'       => $jenjangStats['S1'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
+            'D4'       => $jenjangStats['D4'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
+            'Profesi'  => $jenjangStats['Profesi'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
+            'D3'       => $jenjangStats['D3'] ?? ['total' => 0, 'active' => 0, 'expired' => 0],
         ];
 
         // Pengajuan terbaru
@@ -55,6 +73,9 @@ class DashboardController extends Controller
              LIMIT 8"
         );
 
+        // Monitoring data untuk semua program studi
+        $monitoringData = $programStudiModel->getMonitoringData();
+
         // Notifikasi belum dibaca untuk user ini
         $notifCount = 0;
         if ($this->user) {
@@ -65,13 +86,15 @@ class DashboardController extends Controller
         }
 
         $this->view('dashboard.index', [
-            'pageTitle'        => 'Dashboard',
-            'activePage'       => 'dashboard',
-            'stats'            => $stats,
-            'pengajuanTerbaru' => $pengajuanTerbaru,
-            'jadwalMendatang'  => $jadwalMendatang,
-            'aktivitasTerbaru' => $aktivitasTerbaru,
-            'notifCount'       => $notifCount,
+            'pageTitle'         => 'Dashboard',
+            'activePage'        => 'dashboard',
+            'stats'             => $stats,
+            'jenjangBreakdown'  => $jenjangBreakdown,
+            'monitoringData'    => $monitoringData,
+            'pengajuanTerbaru'  => $pengajuanTerbaru,
+            'jadwalMendatang'   => $jadwalMendatang,
+            'aktivitasTerbaru'  => $aktivitasTerbaru,
+            'notifCount'        => $notifCount,
         ]);
     }
 }
