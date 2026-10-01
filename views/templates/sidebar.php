@@ -142,25 +142,30 @@ $activePage = $activePage ?? ''; // Fallback for linting and safety
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden hidden transition-opacity"></div>
 
 <!-- Sidebar -->
-<aside id="sidebar" class="fixed top-0 left-0 z-50 h-screen w-72 bg-white border-r border-surface-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+<aside id="sidebar" class="fixed top-0 left-0 z-50 h-screen w-72 bg-gradient-to-b from-[#38bdf8] via-[#0ea5e9] to-[#0369a1] border-r border-[#0369a1]/30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col text-white">
+
+    <!-- Subtle overlay for sidebar -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,255,255,0.10)_0%,transparent_60%)] pointer-events-none"></div>
 
     <!-- Logo & Brand -->
-    <div class="flex items-center gap-3 px-6 h-16 border-b border-surface-200 flex-shrink-0">
-        <div class="w-10 h-10 flex items-center justify-center shrink-0">
-            <img src="<?= asset('images/logo-uika.png') ?>" alt="Logo UIKA" class="w-full h-full object-contain drop-shadow-sm">
-        </div>
-        <div>
-            <h1 class="text-base font-bold text-surface-900 leading-tight tracking-tight"><?= e(APP_NAME) ?></h1>
-            <p class="text-[10px] text-surface-500 font-medium tracking-wider uppercase">SIM Akreditasi</p>
-        </div>
+    <div class="relative z-10 flex items-center px-6 h-16 border-b border-white/10 flex-shrink-0">
+        <a href="<?= url('dashboard') ?>" class="flex items-center gap-3 flex-1 group" title="Ke Halaman Dashboard">
+            <div class="w-10 h-10 flex items-center justify-center shrink-0 bg-white/20 backdrop-blur-sm rounded-lg p-1 border border-white/30 group-hover:bg-white/30 transition-colors">
+                <img src="<?= asset('images/logo-uika.png') ?>" alt="Logo UIKA" class="w-full h-full object-contain drop-shadow-sm">
+            </div>
+            <div>
+                <h1 class="text-base font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors"><?= e(APP_NAME) ?></h1>
+                <p class="text-[10px] text-white/70 font-medium tracking-wider uppercase group-hover:text-white/90 transition-colors">SIM Akreditasi</p>
+            </div>
+        </a>
         <!-- Mobile Close Button -->
-        <button id="btn-close-sidebar" class="lg:hidden ml-auto p-1.5 text-surface-500 hover:text-surface-900 hover:bg-surface-100 rounded-lg transition-all">
+        <button id="btn-close-sidebar" class="lg:hidden p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all ml-2">
             <i data-lucide="x" class="w-4 h-4"></i>
         </button>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-thin">
+    <nav class="relative z-10 flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-thin scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30">
         <?php foreach ($menuItems as $item): ?>
             <?php
             // Divider / Section Header
@@ -170,7 +175,7 @@ $activePage = $activePage ?? ''; // Fallback for linting and safety
                 if (!$showSection) continue;
             ?>
                 <div class="pt-5 pb-2 px-3">
-                    <p class="text-[10px] font-bold text-surface-500 tracking-[0.15em] uppercase"><?= e($item['label']) ?></p>
+                    <p class="text-[10px] font-bold text-white/50 tracking-[0.15em] uppercase"><?= e($item['label']) ?></p>
                 </div>
             <?php
             // Menu Item
@@ -180,35 +185,20 @@ $activePage = $activePage ?? ''; // Fallback for linting and safety
 
                 $isActive = ($activePage === $menuKey);
                 $activeClass = $isActive
-                    ? 'bg-primary-50 text-primary-600 border-primary-100 shadow-sm'
-                    : 'text-surface-600 border-transparent hover:bg-surface-50 hover:text-surface-900';
+                    ? 'bg-white/20 text-white shadow-sm border-white/20'
+                    : 'text-white/80 border-transparent hover:bg-white/10 hover:text-white';
             ?>
                 <a href="<?= $item['url'] ?>"
                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 <?= $activeClass ?>">
                     <i data-lucide="<?= $item['icon'] ?>"
-                       class="w-[18px] h-[18px] flex-shrink-0 <?= $isActive ? 'text-primary-600' : 'text-surface-400 group-hover:text-surface-600' ?> transition-colors"></i>
+                       class="w-[18px] h-[18px] flex-shrink-0 <?= $isActive ? 'text-white' : 'text-white/70 group-hover:text-white' ?> transition-colors"></i>
                     <span><?= e($item['label']) ?></span>
                     <?php if ($isActive): ?>
-                        <div class="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse-slow"></div>
+                        <div class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse-slow shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
                     <?php endif; ?>
                 </a>
             <?php endif; ?>
         <?php endforeach; ?>
     </nav>
 
-    <!-- Sidebar Footer: User Info -->
-    <div class="flex-shrink-0 border-t border-surface-200 p-4">
-        <div class="flex items-center gap-3 p-2 rounded-xl bg-surface-50 border border-surface-100">
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500/80 to-primary-600/80 flex items-center justify-center text-white text-xs font-bold">
-                <?= get_initials($currentUser['nama_lengkap'] ?? 'User') ?>
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-surface-900 truncate"><?= e($currentUser['nama_lengkap'] ?? '') ?></p>
-                <p class="text-[11px] text-surface-500 truncate"><?= e(role_label($currentUser['role'] ?? '')) ?></p>
-            </div>
-            <a href="<?= url('auth/logout') ?>" class="p-1.5 text-surface-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Keluar">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </div>
 </aside>

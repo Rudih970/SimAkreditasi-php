@@ -167,13 +167,20 @@ $activePage = $activePage ?? '';
 
                         <!-- Breadcrumb / Page Title -->
                         <div class="hidden lg:flex items-center gap-2 text-sm">
-                            <a href="<?= url('dashboard') ?>" class="text-surface-500 hover:text-surface-700 transition-colors">
-                                <i data-lucide="home" class="w-4 h-4"></i>
-                            </a>
-                            <?php if (!empty($activePage) && $activePage !== 'dashboard'): ?>
-                                <i data-lucide="chevron-right" class="w-4 h-4 text-surface-400"></i>
-                                <span class="text-surface-800 font-medium capitalize"><?= e(str_replace('-', ' ', $activePage)) ?></span>
-                            <?php endif; ?>
+                            <?php 
+                                $breadcrumbLabel = 'Dashboard';
+                                if (!empty($activePage) && isset($menuItems)) {
+                                    foreach ($menuItems as $item) {
+                                        if (isset($item['key']) && $item['key'] === $activePage) {
+                                            $breadcrumbLabel = $item['label'];
+                                            break;
+                                        }
+                                    }
+                                } elseif (!empty($activePage) && $activePage !== 'dashboard') {
+                                    $breadcrumbLabel = ucwords(str_replace(['-', '_'], ' ', $activePage));
+                                }
+                            ?>
+                            <span class="text-surface-800 font-medium"><?= e($breadcrumbLabel) ?></span>
                         </div>
 
                         <!-- Right Side: Search, Notifications, Profile -->
