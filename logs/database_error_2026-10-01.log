@@ -1,0 +1,13 @@
+[2026-10-01 10:53:49] DATABASE ERROR
+  Message: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect integer value: '' for column `akreditasiflow_db`.`users`.`program_studi_id` at row 1
+  Code: 22007
+  Query: INSERT INTO users (nik, nama_lengkap, email, password, role, program_studi_id, jabatan, is_active, created_at)
+                 VALUES (:nik, :nama, :email, :password, :role, :prodi_id, :jabatan, 1, NOW())
+  Params: {"nik":"410100715","nama":"Rudi Hartono","email":"hartono.rudi@uika-bogor.ac.id","password":"$2y$10$LT99IAWoKEAvPI9lvsfrDO41tS3hyB22Z6PCRniQBX2BgZ6LCupFG","role":"admin_universitas","prodi_id":"","jabatan":""}
+  File: C:\xampp\htdocs\SimAkreditasi\config\database.php:199
+  Trace: #0 C:\xampp\htdocs\SimAkreditasi\config\database.php(199): PDOStatement->execute(Array)
+#1 C:\xampp\htdocs\SimAkreditasi\controllers\UserController.php(157): Database->execute('INSERT INTO use...', Array)
+#2 C:\xampp\htdocs\SimAkreditasi\core\App.php(108): UserController->store()
+#3 C:\xampp\htdocs\SimAkreditasi\index.php(40): App->__construct()
+#4 {main}
+--------------------------------------------------------------------------------

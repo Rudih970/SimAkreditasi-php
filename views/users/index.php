@@ -20,7 +20,7 @@ require_once ROOT_PATH . '/views/templates/header.php';
                     <!-- Search & Filter -->
                     <div class="mt-4 flex flex-col md:flex-row gap-3">
                         <form method="GET" class="flex gap-2 flex-1" id="search-form">
-                            <input type="text" name="search" placeholder="Cari nama, email, atau NIP..." 
+                            <input type="text" name="search" placeholder="Cari nama, email, atau NIK..." 
                                    value="<?= e($search ?? '') ?>" 
                                    class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
                             <button type="submit" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2 rounded-lg transition-all">
@@ -70,7 +70,7 @@ require_once ROOT_PATH . '/views/templates/header.php';
                                                 </div>
                                                 <div>
                                                     <div class="font-semibold text-slate-900"><?= e($user['nama_lengkap']) ?></div>
-                                                    <div class="text-xs text-slate-500"><?= e($user['nip']) ?></div>
+                                                    <div class="text-xs text-slate-500"><?= e($user['nik']) ?></div>
                                                 </div>
                                             </div>
                                         </td>

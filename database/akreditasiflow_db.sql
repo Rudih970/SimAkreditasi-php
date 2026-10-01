@@ -56,7 +56,7 @@ CREATE TABLE `program_studi` (
 -- ---------------------------------------------------------------------------
 CREATE TABLE `users` (
     `id`                INT             NOT NULL AUTO_INCREMENT,
-    `nip`               VARCHAR(30)     NOT NULL,
+    `nik`               VARCHAR(30)     NOT NULL,
     `nama_lengkap`      VARCHAR(150)    NOT NULL,
     `email`             VARCHAR(150)    NOT NULL,
     `password`          VARCHAR(255)    NOT NULL COMMENT 'Hashed with bcrypt',
@@ -79,7 +79,7 @@ CREATE TABLE `users` (
     `updated_at`        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uq_nip` (`nip`),
+    UNIQUE KEY `uq_nik` (`nik`),
     UNIQUE KEY `uq_email` (`email`),
     INDEX `idx_role` (`role`),
     INDEX `idx_program_studi` (`program_studi_id`),

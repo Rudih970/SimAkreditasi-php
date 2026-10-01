@@ -49,7 +49,7 @@ VALUES
 -- Hash bcrypt: $2y$10$wE45JRgFs9hNU.13WhEY8OqK5Ncc4COYf4BqVpaY75pTUeylZDEma
 
 INSERT INTO `users`
-    (`id`, `nip`, `nama_lengkap`, `email`, `password`, `role`, `program_studi_id`, `jabatan`, `no_telepon`, `is_active`, `last_login`)
+    (`id`, `nik`, `nama_lengkap`, `email`, `password`, `role`, `program_studi_id`, `jabatan`, `no_telepon`, `is_active`, `last_login`)
 VALUES
     -- Admin Universitas (2 akun)
     (1,  '198501012010011001', 'Dr. Ir. Hendra Wijaya, M.T.',        'admin1@universitas.ac.id',       '$2y$10$wE45JRgFs9hNU.13WhEY8OqK5Ncc4COYf4BqVpaY75pTUeylZDEma', 'admin_universitas',  NULL, 'Kepala Biro TIK',              '081200001001', 1, '2026-08-30 08:15:00'),

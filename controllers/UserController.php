@@ -22,7 +22,7 @@ class UserController extends Controller
         $perPage = 15;
 
         // Build query
-        $query = "SELECT id, nip, nama_lengkap, email, role, program_studi_id, is_active, created_at FROM users WHERE 1=1";
+        $query = "SELECT id, nik, nama_lengkap, email, role, program_studi_id, is_active, created_at FROM users WHERE 1=1";
         $params = [];
 
         if ($status === 'active') {
@@ -37,7 +37,7 @@ class UserController extends Controller
         }
 
         if (!empty($search)) {
-            $query .= " AND (nama_lengkap LIKE :search OR email LIKE :search OR nip LIKE :search)";
+            $query .= " AND (nama_lengkap LIKE :search OR email LIKE :search OR nik LIKE :search)";
             $params['search'] = "%$search%";
         }
 
@@ -90,11 +90,12 @@ class UserController extends Controller
         $prodis = $this->db->fetchAll("SELECT id, nama_prodi, kode_prodi FROM program_studi WHERE is_active = 1 ORDER BY nama_prodi");
 
         $this->view('users.form', [
-            'pageTitle' => 'Tambah Pengguna Baru',
+            'pageTitle'  => 'Tambah Pengguna Baru',
             'activePage' => 'users',
-            'user' => null,
-            'prodis' => $prodis,
-            'action' => 'create',
+            'user'       => null,
+            'prodis'     => $prodis,
+            'action'     => 'create',
+            'csrfToken'  => csrf_token(),
         ]);
     }
 
@@ -117,7 +118,7 @@ class UserController extends Controller
 
         // Validate input
         $errors = [];
-        if (empty($_POST['nip'])) $errors[] = 'NIP harus diisi';
+        if (empty($_POST['nik'])) $errors[] = 'NIK harus diisi';
         if (empty($_POST['nama_lengkap'])) $errors[] = 'Nama lengkap harus diisi';
         if (empty($_POST['email'])) $errors[] = 'Email harus diisi';
         if (empty($_POST['password'])) $errors[] = 'Password harus diisi';
@@ -128,13 +129,13 @@ class UserController extends Controller
             $errors[] = 'Format email tidak valid';
         }
 
-        // Check duplicate NIP & email
+        // Check duplicate NIK & email
         $existing = $this->db->fetch(
-            "SELECT id FROM users WHERE nip = :nip OR email = :email",
-            ['nip' => $_POST['nip'] ?? '', 'email' => $_POST['email'] ?? '']
+            "SELECT id FROM users WHERE nik = :nik OR email = :email",
+            ['nik' => $_POST['nik'] ?? '', 'email' => $_POST['email'] ?? '']
         );
         if ($existing) {
-            $errors[] = 'NIP atau Email sudah terdaftar';
+            $errors[] = 'NIK atau Email sudah terdaftar';
         }
 
         // Validate password strength
@@ -150,10 +151,10 @@ class UserController extends Controller
         // Insert
         try {
             $this->db->execute(
-                "INSERT INTO users (nip, nama_lengkap, email, password, role, program_studi_id, jabatan, is_active, created_at)
-                 VALUES (:nip, :nama, :email, :password, :role, :prodi_id, :jabatan, 1, NOW())",
+                "INSERT INTO users (nik, nama_lengkap, email, password, role, program_studi_id, jabatan, is_active, created_at)
+                 VALUES (:nik, :nama, :email, :password, :role, :prodi_id, :jabatan, 1, NOW())",
                 [
-                    'nip' => $_POST['nip'],
+                    'nik'     => $_POST['nik'],
                     'nama' => $_POST['nama_lengkap'],
                     'email' => $_POST['email'],
                     'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
@@ -192,11 +193,12 @@ class UserController extends Controller
         $prodis = $this->db->fetchAll("SELECT id, nama_prodi, kode_prodi FROM program_studi WHERE is_active = 1 ORDER BY nama_prodi");
 
         $this->view('users.form', [
-            'pageTitle' => 'Edit Pengguna',
+            'pageTitle'  => 'Edit Pengguna',
             'activePage' => 'users',
-            'user' => $user,
-            'prodis' => $prodis,
-            'action' => 'edit',
+            'user'       => $user,
+            'prodis'     => $prodis,
+            'action'     => 'edit',
+            'csrfToken'  => csrf_token(),
         ]);
     }
 
